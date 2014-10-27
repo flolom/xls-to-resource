@@ -180,6 +180,11 @@ public class XlsToResources {
 				Row row = sheet.getRow(i);
 
 				logger.log(Level.FINEST, " processing row: " + i + "...");
+				
+				if (row == null) {
+					logger.log(Level.WARNING, " row: " + i + " is null");
+					continue;
+				}
 
 				Cell keyCell = row.getCell(entry.getColumnKey() - 1);
 				Cell valueCell = row.getCell(entry.getColumnValue() - 1);
