@@ -1,10 +1,13 @@
 package com.hotcocoacup.mobiletools.xlstoresouces;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -241,9 +244,9 @@ public class XlsToResources {
 			String androidFileName = cmd.getOptionValue('a');
 			logger.log(Level.INFO, "Exporting as android resource: " + androidFileName);
 			
-			FileOutputStream outputAndroidStream;
+			Writer outputAndroidStream;
 			try {
-				outputAndroidStream = new FileOutputStream(androidFileName);
+				outputAndroidStream = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(androidFileName), "UTF8"));
 				Processor processorAndroid = new AndroidProcessor();
 				processorAndroid.process(outputAndroidStream, map);
 				logger.log(Level.INFO, "Exported with success");
@@ -257,9 +260,9 @@ public class XlsToResources {
 			String iosFileName = cmd.getOptionValue('i');
 			logger.log(Level.INFO, "Exporting as ios resource: " + iosFileName);
 			
-			FileOutputStream outputIosStream;
+			Writer outputIosStream;
 			try {
-				outputIosStream = new FileOutputStream(iosFileName);
+				outputIosStream = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(iosFileName), "UTF8"));
 				Processor processorIos = new IosProcessor();
 				processorIos.process(outputIosStream, map);
 				logger.log(Level.INFO, "Exported with success");
