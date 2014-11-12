@@ -40,7 +40,7 @@ public class IosProcessor implements Processor {
 				value = value.replace("\"", "\\\"");
 				
 				output.write(value);
-				output.write("\"\n");
+				output.write("\";\n");
 				
 			}
 			

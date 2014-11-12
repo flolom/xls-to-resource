@@ -192,7 +192,7 @@ public class XlsToResources {
 				Cell keyCell = row.getCell(entry.getColumnKey() - 1);
 				Cell valueCell = row.getCell(entry.getColumnValue() - 1);
 
-				if (keyCell == null) {
+				if (keyCell == null || keyCell.getStringCellValue().isEmpty()) {
 					logger.log(Level.WARNING,
 							"Key column " + entry.getColumnKey() + " (row "
 									+ (i + 1)
@@ -200,7 +200,7 @@ public class XlsToResources {
 					continue;
 				}
 
-				if (valueCell == null) {
+				if (valueCell == null || valueCell.getStringCellValue().isEmpty()) {
 					logger.log(Level.WARNING,
 							"Value colum " + entry.getColumnValue() + " (row "
 									+ (i + 1)
