@@ -24,6 +24,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -33,6 +35,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import com.hotcocoacup.mobiletools.xlstoresouces.AndroidProcessor;
+import com.hotcocoacup.mobiletools.xlstoresouces.IosProcessor;
+import com.hotcocoacup.mobiletools.xlstoresouces.Processor;
 import com.hotcocoacup.mobiletools.xlstoresouces.model.Entry;
 import com.hotcocoacup.mobiletools.xlstoresouces.model.KeyValuePair;
 
@@ -148,6 +153,8 @@ public class XlsToResources {
 						e);
 				continue;
 			}
+			
+			FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
 			// invalid sheet number
 			if (entry.getSheet() < 0
@@ -192,7 +199,10 @@ public class XlsToResources {
 				Cell keyCell = row.getCell(entry.getColumnKey() - 1);
 				Cell valueCell = row.getCell(entry.getColumnValue() - 1);
 
-				if (keyCell == null || keyCell.getStringCellValue().isEmpty()) {
+				String keyStr = getString(evaluator, keyCell);
+				String valueStr = getString(evaluator, keyCell);
+				
+				if (keyStr == null || keyStr.isEmpty()) {
 					logger.log(Level.WARNING,
 							"Key column " + entry.getColumnKey() + " (row "
 									+ (i + 1)
@@ -200,16 +210,13 @@ public class XlsToResources {
 					continue;
 				}
 
-				if (valueCell == null || valueCell.getStringCellValue().isEmpty()) {
+				if (valueStr == null || valueStr.isEmpty()) {
 					logger.log(Level.WARNING,
 							"Value colum " + entry.getColumnValue() + " (row "
 									+ (i + 1)
 									+ ") does not exist. Skipping row.");
 					continue;
 				}
-
-				String key = keyCell.getStringCellValue();
-				String value = valueCell.getStringCellValue();
 
 				String groupBy = "";
 				if (entry.getGroupBy() != -1) {
@@ -228,7 +235,7 @@ public class XlsToResources {
 					}
 				}
 
-				KeyValuePair keyValue = new KeyValuePair(key, value);
+				KeyValuePair keyValue = new KeyValuePair(keyStr, valueStr);
 
 				add(map, groupBy, keyValue);
 			}
@@ -273,6 +280,35 @@ public class XlsToResources {
 		}
 		
 		logger.log(Level.INFO, "End of execution");
+	}
+	
+	private static String getString(FormulaEvaluator evaluator, Cell cell) {
+		
+		if (cell == null) {
+			return "";
+		}
+		
+		CellValue cellValue = evaluator.evaluate(cell);
+		
+		if (cellValue == null) {
+			return "";
+		}
+		
+		switch (cellValue.getCellType()) {
+		
+			case Cell.CELL_TYPE_BOOLEAN:
+				return cellValue.getBooleanValue() ? "true" : "false";
+			case Cell.CELL_TYPE_NUMERIC:
+				return String.valueOf(cellValue.getNumberValue());
+			case Cell.CELL_TYPE_STRING:
+				return cellValue.getStringValue();
+			case Cell.CELL_TYPE_FORMULA: // not happening because we evaluate
+			case Cell.CELL_TYPE_ERROR:
+			case Cell.CELL_TYPE_BLANK:
+			default:
+				return "";
+		}
+		
 	}
 
 	private static void add(Map<String, List<KeyValuePair>> map,
