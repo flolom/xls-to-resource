@@ -22,6 +22,7 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -43,7 +44,7 @@ import com.hotcocoacup.mobiletools.xlstoresouces.model.KeyValuePair;
 
 public class XlsToResources {
 
-	public static final String VERSION = "1.0.0";
+	public static final String VERSION = XlsToResources.class.getPackage().getImplementationVersion();
 	public static final String LOGGER_NAME = "XlsToResources";
 
 	private static Logger logger = Logger.getLogger(LOGGER_NAME);
@@ -195,10 +196,12 @@ public class XlsToResources {
 					logger.log(Level.WARNING, " row: " + i + " is null");
 					continue;
 				}
+				
+				Cell keyCell = row.getCell(new CellReference(entry.getColumnKey()).getCol());
+				Cell valueCell = row.getCell(new CellReference(entry.getColumnValue()).getCol());
 
-				Cell keyCell = row.getCell(entry.getColumnKey() - 1);
-				Cell valueCell = row.getCell(entry.getColumnValue() - 1);
-
+				
+				
 				String keyStr = getString(evaluator, keyCell);
 				String valueStr = getString(evaluator, valueCell);
 				
@@ -219,8 +222,8 @@ public class XlsToResources {
 				}
 
 				String groupBy = "";
-				if (entry.getGroupBy() != -1) {
-					Cell groupByCell = row.getCell(entry.getGroupBy() - 1);
+				if (entry.getGroupBy() != null) {
+					Cell groupByCell = row.getCell(new CellReference(entry.getGroupBy()).getCol());
 
 					if (groupByCell != null) {
 						groupBy = groupByCell.getStringCellValue();
@@ -336,9 +339,9 @@ public class XlsToResources {
 		System.out.println("         \"sheet\": (int) \"index of the sheet concerned. 0=first sheet. Default=0\", ");
 		System.out.println("         \"rowStart\": (int) \"index of the starting row. 1=first row. Default=1\", ");
 		System.out.println("         \"rowEnd\": (int) \"index of the last row. 1=first row. -1=all rows. Default=-1\", ");
-		System.out.println("         \"columnKey\": (int) \"index of the column containing the key. 1=column A. Default=1\", ");
-		System.out.println("         \"columnValue\": (int) \"index of the column containing the value. 1=column A. Default=2\", ");
-		System.out.println("         \"groupBy\": (int) \"index of the column containing the group value. 1=column A. -1=Do not group. Default=-1\", ");
+		System.out.println("         \"columnKey\": (String) \"letter of the column containing the key. . Default='A'\", ");
+		System.out.println("         \"columnValue\": (String) \"letter of the column containing the value. Default='B'\", ");
+		System.out.println("         \"groupBy\": (String) \"letter of the column containing the group value. null=Do not group. Default=null\", ");
 		System.out.println("     }, ...");
 		System.out.println("]");
 		System.out.println("");

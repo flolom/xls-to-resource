@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.hotcocoacup.mobiletools</groupId>
 	<artifactId>xls-to-resources</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.2</version>
 
 	<dependencies>
 		<dependency>
@@ -35,6 +35,7 @@
 			<archive>
 			  <manifest>
 				<mainClass>com.hotcocoacup.mobiletools.xlstoresouces.XlsToResources</mainClass>
+				<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 			  </manifest>
 			</archive>
 			<descriptorRefs>

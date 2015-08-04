@@ -7,9 +7,9 @@ public class Entry {
 	private int sheet = 0;
 	private int rowStart = 1;
 	private int rowEnd = -1;
-	private int columnKey = 1;
-	private int columnValue = 2;
-	private int groupBy = -1;
+	private String columnKey = "A";
+	private String columnValue = "B";
+	private String groupBy = null;
 	
 	/**
 	 * @return the xlsFile
@@ -62,37 +62,37 @@ public class Entry {
 	/**
 	 * @return the columnKey
 	 */
-	public int getColumnKey() {
+	public String getColumnKey() {
 		return columnKey;
 	}
 	/**
 	 * @param columnKey the columnKey to set
 	 */
-	public void setColumnKey(int columnKey) {
+	public void setColumnKey(String columnKey) {
 		this.columnKey = columnKey;
 	}
 	/**
 	 * @return the columnValue
 	 */
-	public int getColumnValue() {
+	public String getColumnValue() {
 		return columnValue;
 	}
 	/**
 	 * @param columnValue the columnValue to set
 	 */
-	public void setColumnValue(int columnValue) {
+	public void setColumnValue(String columnValue) {
 		this.columnValue = columnValue;
 	}
 	/**
 	 * @return the groupBy
 	 */
-	public int getGroupBy() {
+	public String getGroupBy() {
 		return groupBy;
 	}
 	/**
 	 * @param groupBy the groupBy to set
 	 */
-	public void setGroupBy(int groupBy) {
+	public void setGroupBy(String groupBy) {
 		this.groupBy = groupBy;
 	}
 	
