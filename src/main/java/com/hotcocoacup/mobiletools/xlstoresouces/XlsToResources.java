@@ -200,7 +200,7 @@ public class XlsToResources {
 				Cell valueCell = row.getCell(entry.getColumnValue() - 1);
 
 				String keyStr = getString(evaluator, keyCell);
-				String valueStr = getString(evaluator, keyCell);
+				String valueStr = getString(evaluator, valueCell);
 				
 				if (keyStr == null || keyStr.isEmpty()) {
 					logger.log(Level.WARNING,

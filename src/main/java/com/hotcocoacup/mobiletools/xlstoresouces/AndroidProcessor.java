@@ -35,6 +35,7 @@ public class AndroidProcessor implements Processor {
 				String key = pair.getKey();
 				key = key.replace("\\", "\\\\");
 				key = key.replace("\"", "\\\"");
+				key = key.replace(".", "_");
 				output.write("  <string name=\"" + key + "\">");
 				
 				String value = pair.getValue();
