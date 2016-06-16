@@ -20,6 +20,7 @@ import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.poi.hssf.util.CellReference;
@@ -69,6 +70,8 @@ public class XlsToResources {
 				"The android resouce filename to export");
 		options.addOption("i", "ios", true,
 				"The iOS resource filename to export");
+		options.addOption(new Option("expandgroupby", false, 
+				"If a groupBy column exists, and the cell is empty, it will copy the value of the previous cells"));
 
 		CommandLineParser parser = new BasicParser();
 		CommandLine cmd = null;
@@ -103,6 +106,8 @@ public class XlsToResources {
 			help();
 			return;
 		}
+		
+		boolean expandGroupby = cmd.hasOption("expandgroupby");
 
 		logger.info("Reading configuration file " + configFileName);
 		File file = new File(configFileName);
@@ -184,6 +189,8 @@ public class XlsToResources {
 							entry.getRowEnd() - 1);
 				}
 			}
+			
+			String lastGroupbyValue = null;
 
 			// processing all the rows of the file
 			for (int i = entry.getRowStart() - 1; i <= rowEnd; i++) {
@@ -225,16 +232,22 @@ public class XlsToResources {
 				if (entry.getGroupBy() != null) {
 					Cell groupByCell = row.getCell(new CellReference(entry.getGroupBy()).getCol());
 
-					if (groupByCell != null) {
+					if (groupByCell != null && !groupByCell.getStringCellValue().isEmpty()) {
 						groupBy = groupByCell.getStringCellValue();
+						lastGroupbyValue = groupBy;
 					} else {
-						logger.log(
-								Level.WARNING,
-								"GroupBy column "
-										+ entry.getGroupBy()
-										+ " (row "
-										+ (i + 1)
-										+ ") does not exist. GroupBy set to default.");
+						
+						if (expandGroupby && lastGroupbyValue != null && !lastGroupbyValue.isEmpty()) {
+							groupBy = lastGroupbyValue;
+						} else {
+						
+							logger.log( Level.WARNING,
+									"GroupBy column "
+											+ entry.getGroupBy()
+											+ " (row "
+											+ (i + 1)
+											+ ") does not exist. GroupBy set to default.");
+						}
 					}
 				}
 
